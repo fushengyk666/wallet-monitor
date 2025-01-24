@@ -14,6 +14,10 @@ export class RpcConnectionManager {
     static logConnection = new Connection(HELIUS_NETWORK, {
       commitment: 'processed',
     })
+
+    static heliusConnection = new Connection(HELIUS_NETWORK, {
+      commitment: 'confirmed',
+    })
   
     static getRandomConnection(): Connection {
       const randomIndex = Math.floor(Math.random() * RpcConnectionManager.connections.length)
