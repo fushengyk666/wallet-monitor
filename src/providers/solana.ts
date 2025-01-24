@@ -9,7 +9,7 @@ const CHAINSTACK_NETWORK = `https://solana-mainnet.core.chainstack.com/${process
 const QUICKNODE_NETWORK = process.env.QUICKNODE_API_KEY ?? ''
 
 export class RpcConnectionManager {
-    static connections = [new Connection(HELIUS_NETWORK, 'confirmed')]
+    static connections = [new Connection(QUICKNODE_NETWORK, 'confirmed'),new Connection(CHAINSTACK_NETWORK, 'confirmed')]
   
     static logConnection = new Connection(HELIUS_NETWORK, {
       commitment: 'processed',
