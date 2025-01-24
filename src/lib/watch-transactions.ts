@@ -79,7 +79,7 @@ export class WatchTransaction extends EventEmitter {
 
             const transactionSignature = logs.signature
             const transactionDetails = await this.getParsedTransaction(transactionSignature)
-
+            console.log('TRANSACTION DETAILS', transactionDetails)
             if (!transactionDetails) {
               return
             }
