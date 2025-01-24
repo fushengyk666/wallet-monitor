@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 import { bot } from './providers/telegram'
 import express, { Express } from 'express'
 import { TrackWallets } from './lib/track-wallets'
+import { CronJobs } from './lib/cron-jobs'
 
 dotenv.config()
 
@@ -9,12 +10,14 @@ const PORT = process.env.PORT || 3002
 
 class Main {
   private trackWallets: TrackWallets
+  private cronJobs: CronJobs
+  
   constructor(private app: Express = express()) {
     this.app.use(express.json({ limit: '50mb' }))
 
     this.setupRoutes()
     this.trackWallets = new TrackWallets()
-
+    this.cronJobs = new CronJobs()
     this.app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
   }
 
@@ -42,6 +45,7 @@ class Main {
 
   public async init(): Promise<void> {
     await this.trackWallets.setupWalletWatcher({ event: 'initial' })
+    await this.cronJobs.updateSolPrice()
   }
 }
 
