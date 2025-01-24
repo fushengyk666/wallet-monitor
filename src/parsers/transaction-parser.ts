@@ -20,12 +20,12 @@ export class TransactionParser {
   }
 
   public async parseRpc(
-    transactionDetails: (ParsedTransactionWithMeta | null)[],
+    transactionDetail: ParsedTransactionWithMeta | null,
     swap: SwapType,
     solPriceUsd: string | undefined,
   ): Promise<NativeParserInterface | undefined> {
     try {
-      if (transactionDetails === undefined) {
+      if (transactionDetail === undefined) {
         console.log('Transaction not found or invalid.')
         return
       }
@@ -46,10 +46,10 @@ export class TransactionParser {
 
       // console.log('PARSED_TRANSACTION:', transactionDetails)
 
-      const accountKeys = transactionDetails[0]?.transaction.message.accountKeys
+      const accountKeys = transactionDetail?.transaction.message.accountKeys
 
       if (!accountKeys) {
-        console.log('Account keys not found in transaction details.', transactionDetails)
+        console.log('Account keys not found in transaction details.', transactionDetail)
         return
       }
 
@@ -57,11 +57,11 @@ export class TransactionParser {
 
       const signerAccountAddress = signerAccount?.pubkey.toString()
 
-      const preBalances = transactionDetails[0]?.meta?.preBalances
-      const postBalances = transactionDetails[0]?.meta?.postBalances
+      const preBalances = transactionDetail?.meta?.preBalances
+      const postBalances = transactionDetail?.meta?.postBalances
 
       // Transaction Metadata
-      transactionDetails[0]?.meta?.innerInstructions?.forEach((i: any) => {
+      transactionDetail?.meta?.innerInstructions?.forEach((i: any) => {
         // raydium
         i.instructions.forEach((r: any) => {
           if (r.parsed?.type === 'transfer' && r.parsed.info.amount !== undefined) {
@@ -71,7 +71,7 @@ export class TransactionParser {
       })
 
       // pumpfun
-      transactionDetails[0]?.transaction.message.instructions.map((instruction: any) => {
+      transactionDetail?.transaction.message.instructions.map((instruction: any) => {
         if (transactions.length <= 1 && instruction && instruction.parsed !== undefined) {
           parsedInfos.push(instruction.parsed)
         }
@@ -79,7 +79,7 @@ export class TransactionParser {
 
       // console.log('transaction', transactions)
 
-      const nativeBalance = this.tokenUtils.calculateNativeBalanceChanges(transactionDetails)
+      const nativeBalance = this.tokenUtils.calculateNativeBalanceChanges(transactionDetail)
       // console.log('native balance', nativeBalance)
 
       if (!preBalances || !postBalances) {

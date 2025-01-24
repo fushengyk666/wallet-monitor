@@ -47,8 +47,8 @@ export class TokenUtils {
     return tokenOutMint
   }
 
-  public calculateNativeBalanceChanges(transactionDetails: (ParsedTransactionWithMeta | null)[]) {
-    const meta = transactionDetails[0] && transactionDetails[0].meta
+  public calculateNativeBalanceChanges(transactionDetail: ParsedTransactionWithMeta | null) {
+    const meta = transactionDetail && transactionDetail.meta
 
     if (!meta) {
       console.log('No meta information available')

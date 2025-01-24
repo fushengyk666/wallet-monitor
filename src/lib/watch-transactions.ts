@@ -78,16 +78,16 @@ export class WatchTransaction extends EventEmitter {
             }
 
             const transactionSignature = logs.signature
-            const transactionDetails = await this.getParsedTransaction(transactionSignature)
-            console.log('TRANSACTION DETAILS', transactionDetails)
-            if (!transactionDetails) {
+            const transactionDetail = await this.getParsedTransaction(transactionSignature)
+            console.log('TRANSACTION DETAILS', transactionDetail)
+            if (!transactionDetail) {
               return
             }
 
             // Parse transaction
             const solPriceUsd = CronJobs.getSolPrice()
             const transactionParser = new TransactionParser(transactionSignature)
-            const parsed = await transactionParser.parseRpc(transactionDetails, swap, solPriceUsd)
+            const parsed = await transactionParser.parseRpc(transactionDetail, swap, solPriceUsd)
 
             if (!parsed) {
               return
@@ -114,11 +114,11 @@ export class WatchTransaction extends EventEmitter {
 
   private async getParsedTransaction(transactionSignature: string) {
     try {
-      const transactionDetails = await RpcConnectionManager.heliusConnection.getParsedTransactions([transactionSignature], {
+      const transactionDetail = await RpcConnectionManager.heliusConnection.getParsedTransaction(transactionSignature, {
         maxSupportedTransactionVersion: 0,
       })
 
-      return transactionDetails
+      return transactionDetail
     } catch (error) {
       console.log('GET_PARSED_TRANSACTIONS_ERROR', error)
       return
