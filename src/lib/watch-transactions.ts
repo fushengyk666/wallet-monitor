@@ -114,7 +114,7 @@ export class WatchTransaction extends EventEmitter {
 
   private async getParsedTransaction(transactionSignature: string) {
     try {
-      const transactionDetails = await RpcConnectionManager.getRandomConnection().getParsedTransactions([transactionSignature], {
+      const transactionDetails = await RpcConnectionManager.logConnection().getParsedTransactions([transactionSignature], {
         maxSupportedTransactionVersion: 0,
       })
 
