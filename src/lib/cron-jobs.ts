@@ -1,4 +1,5 @@
 import { TokenUtils } from './token-utils'
+import cron from 'node-cron'
 
 export class CronJobs {
 
@@ -8,38 +9,30 @@ export class CronJobs {
   constructor() {
   }
 
-  public async updateSolPrice(): Promise<string | undefined> {
-    const now = Date.now()
-
-    if (CronJobs.cachedPrice && now - CronJobs.lastFetched < CronJobs.refreshInterval) {
-      // console.log('Using cached Solana price:', CronJobs.cachedPrice)
-      return CronJobs.cachedPrice
-    }
-
-    try {
-      // console.log('REFETCHING SOL PRICE')
-      let solPrice = await TokenUtils.getSolPriceGecko()
-
-      if (!solPrice) {
-        solPrice = await TokenUtils.getSolPriceNative()
+  public async updateSolPrice(): Promise<void> {
+    cron.schedule('*/10 * * * *', async () => {
+      const now = Date.now()
+      if (CronJobs.cachedPrice && now - CronJobs.lastFetched < CronJobs.refreshInterval) {
+        return 
       }
 
-      if (solPrice) {
-        CronJobs.cachedPrice = solPrice
-        CronJobs.lastFetched = now
+      try {
+        console.log('REFETCHING SOL PRICE')
+        let solPrice = await TokenUtils.getSolPriceGecko()
+        if (!solPrice) {
+          solPrice = await TokenUtils.getSolPriceNative()
+        }
+
+        if (solPrice) {
+          CronJobs.cachedPrice = solPrice
+          CronJobs.lastFetched = now
+        }
+
+      } catch (error) {
+        console.error('Error fetching Solana price:', error)
+        return
       }
-
-      return CronJobs.cachedPrice!
-    } catch (error) {
-      console.error('Error fetching Solana price:', error)
-
-      // Fallback to the last cached price, if available
-      if (CronJobs.cachedPrice) {
-        return CronJobs.cachedPrice
-      }
-
-      return
-    }
+    })
   }
 
   static getSolPrice() {
