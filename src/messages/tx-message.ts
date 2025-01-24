@@ -9,6 +9,9 @@ export class TxMessages {
     tokenMarketCap?: string | undefined,
     walletName?: string,
   ): string {
+    console.log('MESSAGE', message)
+    console.log('TOKEN MARKET CAP', tokenMarketCap)
+    console.log('WALLET NAME', walletName)
     const owner = message.owner
     const amountOut = message.tokenTransfers.tokenAmountOut
     const tokenOut = message.tokenTransfers.tokenOutSymbol
