@@ -48,11 +48,20 @@ export class TxMessages {
 ${message.type === 'buy' ? '🟢' : '🔴'} <a href="${solscanTxUrl}">${message.type?.toUpperCase()} ${message.type === 'buy' ? `${tokenIn}` : `${tokenOut}`}</a> on ${message.platform!.toUpperCase()}
 <b>💎 ${walletName !== '' ? walletName : truncatedOwner}</b>\n
 💎 <a href="${solscanAddressUrl}">${walletName !== '' ? walletName : truncatedOwner}</a> swapped <b>${amountOut}</b>${message.type === 'sell' ? ` ($${fixedUsdAmount})` : ''} <a href="${solscanTokenOutUrl}">${tokenOut}</a> for <b>${amountIn}</b>${message.type === 'buy' ? ` ($${fixedUsdAmount})` : ''} <a href="${solscanTokenInUrl}">${tokenIn}</a> @$${message.swappedTokenPrice?.toFixed(7)}
-      
 ${marketCapText}
 <code>${tokenMintToTrack}</code>
 `
-    return messageText
+    console.log(messageText)
+
+    const newMessageText = `<a href="https://gmgn.ai/sol/address/${owner}">[${walletName}]</a>
+    ${message.type == 'buy' ? '🟢' : '🔴'} ${message.type?.toUpperCase()} ${message.type === 'buy' ? `${amountOut} ${tokenOut}` : `${amountIn} ${tokenIn}`} 
+    Token: ${message.type === 'buy' ? `${amountIn} <a href="https://gmgn.ai/sol/token/${tokenIn}">${tokenIn}</a>` : `${amountOut} <a href="https://gmgn.ai/sol/token/${tokenOut}">${tokenOut}</a>`}
+    Price: $${message.swappedTokenPrice?.toFixed(7)}
+    MCAP: $${tokenMarketCap}
+    Platform: ${message.platform!.toUpperCase()}
+    `;
+    console.log(newMessageText)
+    return newMessageText
   }
 
   static tokenMintedMessage(message: NativeParserInterface, walletName?: string): string {
