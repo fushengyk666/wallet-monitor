@@ -9,6 +9,20 @@ export class CronJobs {
   constructor() {
   }
 
+  public async initSolPrice(): Promise<void> {
+    const now = Date.now()
+    let solPrice = await TokenUtils.getSolPriceGecko()
+    if (!solPrice) {
+      solPrice = await TokenUtils.getSolPriceNative()
+    }
+
+    if (solPrice) {
+      CronJobs.cachedPrice = solPrice
+      CronJobs.lastFetched = now
+    }
+  }
+
+
   public async updateSolPrice(): Promise<void> {
     cron.schedule('*/10 * * * *', async () => {
       const now = Date.now()

@@ -45,6 +45,7 @@ class Main {
 
   public async init(): Promise<void> {
     await this.trackWallets.setupWalletWatcher({ event: 'initial' })
+    await this.cronJobs.initSolPrice()
     await this.cronJobs.updateSolPrice()
   }
 }
