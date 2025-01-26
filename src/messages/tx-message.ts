@@ -54,13 +54,13 @@ ${marketCapText}
     console.log(messageText)
 
     const newMessageText = `<a href="https://gmgn.ai/sol/address/${owner}">[${walletName}]</a>
-    ${message.type == 'buy' ? '🟢' : '🔴'} ${message.type?.toUpperCase()} ${message.type === 'buy' ?  `${amountIn} ${tokenIn}`:`${amountOut} ${tokenOut}`} 
-    Token: ${message.type === 'buy' ? `${amountOut} <a href="https://gmgn.ai/sol/token/${tokenOut}">${tokenOut}</a>` : `${amountIn} <a href="https://gmgn.ai/sol/token/${tokenIn}">${tokenIn}</a>`}
-    Price: $${message.swappedTokenPrice?.toFixed(7)}
-    MCAP: $${tokenMarketCap}
-    Platform: ${message.platform!.toUpperCase()}
-    `;
-    console.log(newMessageText)
+${message.type == 'buy' ? '🟢' : '🔴'} ${message.type?.toUpperCase()} ${message.type === 'buy' ?  `${amountIn} ${tokenIn}`:`${amountOut} ${tokenOut}`} 
+Token: ${message.type === 'buy' ? `${amountOut} <a href="https://gmgn.ai/sol/token/${tokenOut}">${tokenOut}</a>` : `${amountIn} <a href="https://gmgn.ai/sol/token/${tokenIn}">${tokenIn}</a>`}
+Price: $${message.swappedTokenPrice?.toFixed(7)}
+MCAP: $${tokenMarketCap}
+Platform: ${message.platform!.toUpperCase()}
+`;
+console.log(newMessageText)
     return newMessageText
   }
 
