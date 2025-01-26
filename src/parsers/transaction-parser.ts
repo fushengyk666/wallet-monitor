@@ -19,12 +19,88 @@ export class TransactionParser {
     this.tokenParser = new TokenParser(this.connection)
   }
 
+  public async newParseRpc(
+    transactionDetail: ParsedTransactionWithMeta | null,
+    swap: SwapType,
+    solPriceUsd: string | undefined,
+  ): Promise<NativeParserInterface | undefined> {
+    try {
+      console.log('TRANSACTION DETAIL', transactionDetail)
+      if (transactionDetail === undefined) {
+        console.log('Transaction not found or invalid.')
+        return
+      }
+
+      //发起交易账号
+      const accountKeys = transactionDetail?.transaction.message.accountKeys
+
+      if (!accountKeys) {
+        console.log('Account keys not found in transaction details.', transactionDetail)
+        return
+      }
+
+
+      const signerAccountAddress = accountKeys[0]?.pubkey.toString()
+      
+
+      //当前账号是增加还是减少sol
+      const preBalances = transactionDetail?.meta?.preBalances
+      const postBalances = transactionDetail?.meta?.postBalances
+      const preBalance = preBalances?.[0] ?? 0
+      const postBalance = postBalances?.[0] ?? 0
+
+      let type = 'buy'
+      const solDifference = (postBalance - preBalance) / 1e9 // Convert lamports to SOL
+      if(solDifference > 0){
+        type = 'sell'
+      }
+
+
+      const postTokenBalance = transactionDetail?.meta?.postTokenBalances?.find((item)=>item.owner==signerAccountAddress);
+      const preTokenBalance = transactionDetail?.meta?.preTokenBalances?.find((item)=>item.owner==signerAccountAddress);
+      const tokenAmount = Number(postTokenBalance?.uiTokenAmount?.amount ?? 0) / Math.pow(10, postTokenBalance?.uiTokenAmount?.decimals ?? 0)
+      const preTokenAmount = Number(preTokenBalance?.uiTokenAmount?.amount ?? 0) / Math.pow(10, preTokenBalance?.uiTokenAmount?.decimals ?? 0)
+      const tokenDifference = tokenAmount - preTokenAmount
+
+      const tokenInInfo = await this.tokenParser.getTokenInfo(postTokenBalance?.mint ?? "");
+
+      const tokenSymbol = tokenInInfo.data.symbol.replace(/\x00/g, '')
+
+      return {
+          platform: swap,
+          owner: signerAccountAddress,
+          description: "swapDescription",
+          type: type,
+          balanceChange: solDifference,
+          signature: this.transactionSignature,
+          swappedTokenMc: await this.tokenUtils.getTokenMktCap(solPriceUsd ? Number(solPriceUsd)*Math.abs(solDifference)/Math.abs(tokenDifference) : 0, postTokenBalance?.mint ?? '', true),
+          swappedTokenPrice: solPriceUsd ? Number(solPriceUsd)*Math.abs(solDifference)/Math.abs(tokenDifference) : 0, // Removed undefined raydiumTokenPrice
+          solPrice: solPriceUsd || '',
+          tokenTransfers: {
+            tokenInSymbol: type=='buy'?'SOL':tokenSymbol,
+            tokenInMint: type=='buy'?'So11111111111111111111111111111111111111112':postTokenBalance?.mint ?? '',
+            tokenAmountIn: (type=='buy'?Math.abs(solDifference):Math.abs(tokenDifference)).toString(),
+            tokenOutSymbol: type=='buy'?tokenSymbol:'SOL', 
+            tokenOutMint: type=='buy'?postTokenBalance?.mint ?? '':'So11111111111111111111111111111111111111112',
+            tokenAmountOut: (type=='buy'?Math.abs(tokenDifference):Math.abs(solDifference)).toString(),
+        }
+      }
+
+    } catch (error) {
+      console.log('TRANSACTION_PARSER_ERROR', error)
+      return
+    }
+  }
+
+
+
   public async parseRpc(
     transactionDetail: ParsedTransactionWithMeta | null,
     swap: SwapType,
     solPriceUsd: string | undefined,
   ): Promise<NativeParserInterface | undefined> {
     try {
+      console.log('TRANSACTION DETAIL', transactionDetail)
       if (transactionDetail === undefined) {
         console.log('Transaction not found or invalid.')
         return

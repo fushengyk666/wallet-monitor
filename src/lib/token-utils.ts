@@ -113,7 +113,7 @@ export class TokenUtils {
 
       return String(solanaPrice)
     } catch (error) {
-      console.log('GET_SOL_PRICE_ERROR')
+      console.error('GET_SOL_PRICE_ERROR', error)
       return
     }
   }
@@ -141,7 +141,7 @@ export class TokenUtils {
 
       return solPrice
     } catch (error) {
-      console.log('FETCH_SOL_PRICE_ERROR')
+      console.error('FETCH_SOL_PRICE_ERROR', error)
       return
     }
   }

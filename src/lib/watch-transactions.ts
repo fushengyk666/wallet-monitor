@@ -87,7 +87,7 @@ export class WatchTransaction extends EventEmitter {
             // Parse transaction
             const solPriceUsd = CronJobs.getSolPrice()
             const transactionParser = new TransactionParser(transactionSignature)
-            const parsed = await transactionParser.parseRpc(transactionDetail, swap, solPriceUsd)
+            const parsed = await transactionParser.newParseRpc(transactionDetail, swap, solPriceUsd)
 
             if (!parsed) {
               return
