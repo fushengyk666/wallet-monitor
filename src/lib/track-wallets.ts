@@ -19,7 +19,7 @@ export class TrackWallets {
   public async setupWalletWatcher({ event }: SetupWalletWatcherProps): Promise<void> {
     let walletsToFetch
     if (event === 'initial') {
-      const allWallets = [{'address':'CRVidEDtEUTYZisCxBZkpELzhQc9eauMLR3FWg74tReL','name':'JW'}]
+      const allWallets = [{'address':'HnZMpGb6brj1amodgkV2tvUbk7fMGqXUHtke4PmiXTgJ','name':'JW'}]
       return await this.walletWatcher.watchSocket(allWallets!)
     }
   }
